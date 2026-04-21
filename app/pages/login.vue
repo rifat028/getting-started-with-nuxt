@@ -127,7 +127,7 @@ const togglePassword = () => {
             </label>
             <NuxtLink
               to="#"
-              class="text-sm text-orange-500 hover:underline hover:text-orange-600"
+              class="text-xs text-orange-500 hover:underline hover:text-orange-600"
               >Forget password</NuxtLink
             >
           </div>
@@ -147,50 +147,15 @@ const togglePassword = () => {
             />
 
             <!-- Eye Icon -->
-            <button
-              type="button"
-              @click="togglePassword"
-              class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+            <span
+              @click="showPassword = !showPassword"
+              class="absolute right-3 top-2.5 cursor-pointer text-gray-500"
             >
-              <!-- Eye open-->
-              <svg
-                v-if="!showPassword"
-                xmlns="http://www.w3.org/2000/svg"
+              <Icon
+                :name="showPassword ? 'entypo:eye-with-line' : 'entypo:eye'"
                 class="w-5 h-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                <path
-                  stroke-width="2"
-                  d="M2.458 12C3.732 7.943 7.523 5 12 5
-                       c4.477 0 8.268 2.943 9.542 7
-                       -1.274 4.057-5.065 7-9.542 7
-                       -4.477 0-8.268-2.943-9.542-7z"
-                />
-              </svg>
-
-              <!-- Eye Off -->
-              <svg
-                v-else
-                xmlns="http://www.w3.org/2000/svg"
-                class="w-5 h-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-width="2"
-                  d="M13.875 18.825A10.05 10.05 0 0112 19
-                       c-4.478 0-8.27-2.943-9.543-7
-                       a9.956 9.956 0 012.223-3.592M6.18 6.18
-                       A9.956 9.956 0 0112 5c4.478 0 8.27 2.943
-                       9.543 7a9.956 9.956 0 01-4.132 5.411M15 12
-                       a3 3 0 00-3-3m0 0a3 3 0 00-3 3m3-3v6m9 4L3 3"
-                />
-              </svg>
-            </button>
+              />
+            </span>
           </div>
 
           <p v-if="errors.password" class="text-sm text-red-500 mt-1">

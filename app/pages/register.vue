@@ -158,15 +158,9 @@ const handleSubmit = () => {
               placeholder="Enter password"
               class="w-full mt-1 px-3 py-1.5 border rounded-md pr-10 text-sm border-orange-400 focus:ring-1 focus:ring-orange-400 focus:outline-0 focus:border-orange-400 placeholder:text-gray-400 placeholder:text-xs"
             />
-            <!-- <span
-              @click="showPassword = !showPassword"
-              class="absolute right-3 top-2 cursor-pointer text-gray-500"
-            >
-              {{ showPassword ? "🙈" : "👁" }}
-            </span> -->
             <span
               @click="showPassword = !showPassword"
-              class="absolute right-3 top-2 cursor-pointer text-gray-500"
+              class="absolute right-3 top-2.5 cursor-pointer text-gray-500"
             >
               <Icon
                 :name="showPassword ? 'entypo:eye-with-line' : 'entypo:eye'"
@@ -193,9 +187,12 @@ const handleSubmit = () => {
             />
             <span
               @click="showConfirm = !showConfirm"
-              class="absolute right-3 top-2 cursor-pointer text-gray-500"
+              class="absolute right-3 top-2.5 cursor-pointer text-gray-500"
             >
-              {{ showConfirm ? "🙈" : "👁" }}
+              <Icon
+                :name="showConfirm ? 'entypo:eye-with-line' : 'entypo:eye'"
+                class="w-5 h-5"
+              />
             </span>
           </div>
           <p v-if="errors.confirm" class="text-red-500 text-xs mt-1">

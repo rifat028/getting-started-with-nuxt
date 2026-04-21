@@ -1,70 +1,24 @@
 <script setup>
 import { ref } from "vue";
 
-const form = ref({
-  name: "",
-  phone: "",
-  email: "",
-  password: "",
-  confirm: "",
-});
-
-const errors = ref({});
-
 const showPassword = ref(false);
 const showConfirm = ref(false);
 
-// ✅ Validation
-const validate = () => {
-  errors.value = {};
+import { useField } from "vee-validate";
+import { useRegisterValidation } from "@/composables/auth/useRegisterValidation";
 
-  if (!form.value.name) {
-    errors.value.name = "Name is required";
-  }
+const { handleSubmit } = useRegisterValidation();
 
-  if (!/^01\d{9}$/.test(form.value.phone)) {
-    errors.value.phone = "Enter valid 11 digit number starting with 01";
-  }
+const { value: name, errorMessage: nameError } = useField("name");
+const { value: phone, errorMessage: phoneError } = useField("phone");
+const { value: email, errorMessage: emailError } = useField("email");
+const { value: password, errorMessage: passwordError } = useField("password");
+const { value: confirm, errorMessage: confirmError } = useField("confirm");
 
-  if (!/\S+@\S+\.\S+/.test(form.value.email)) {
-    errors.value.email = "Invalid email";
-  }
-
-  // Password validation
-  {
-    if (!form.value.password) {
-      errors.value.password = "Password is required";
-      valid = false;
-    } else if (form.value.password.length < 6) {
-      errors.value.password = "Minimum 6 characters required";
-      valid = false;
-    } else if (!/[a-z]/.test(form.value.password)) {
-      errors.value.password = "Minimum 1 lowercase character required";
-      valid = false;
-    } else if (!/[A-Z]/.test(form.value.password)) {
-      errors.value.password = "Minimum 1 uppercase character required";
-      valid = false;
-    } else if (!/\d/.test(form.value.password)) {
-      errors.value.password = "Minimum 1 number required";
-      valid = false;
-    } else if (!/[@$!%*?&]/.test(form.value.password)) {
-      errors.value.password = "Minimum 1 special character required";
-      valid = false;
-    }
-  }
-
-  if (form.value.password !== form.value.confirm) {
-    errors.value.confirm = "Passwords do not match";
-  }
-
-  return Object.keys(errors.value).length === 0;
-};
-
-const handleSubmit = () => {
-  if (validate()) {
-    alert("Form submitted ✅");
-  }
-};
+const onSubmit = handleSubmit((values) => {
+  alert("Form submitted ✅");
+  console.log(values);
+});
 </script>
 
 <template>
@@ -94,20 +48,20 @@ const handleSubmit = () => {
       </div>
 
       <!-- Form -->
-      <form @submit.prevent="handleSubmit" class="space-y-3">
+      <form @submit.prevent="onSubmit" class="space-y-3">
         <!-- Name -->
         <div class="flex flex-col">
           <label class="text-xs font-medium"
             >Name <span class="text-red-500">*</span></label
           >
           <input
-            v-model="form.name"
+            v-model="name"
             type="text"
             placeholder="Enter your name"
             class="w-full mt-1 px-3 py-1.5 border rounded-md text-sm border-orange-400 focus:ring-1 focus:ring-orange-400 focus:outline-0 focus:border-orange-400 placeholder:text-gray-400 placeholder:text-xs"
           />
-          <p v-if="errors.name" class="text-red-500 text-xs mt-1">
-            {{ errors.name }}
+          <p v-if="nameError" class="text-red-500 text-xs mt-1">
+            {{ nameError }}
           </p>
         </div>
 
@@ -117,7 +71,7 @@ const handleSubmit = () => {
             >Phone Number <span class="text-red-500">*</span></label
           >
           <input
-            v-model="form.phone"
+            v-model="phone"
             type="text"
             placeholder="Enter Bangladeshi phone number"
             class="w-full mt-1 px-3 py-1.5 border rounded-md text-sm border-orange-400 focus:ring-1 focus:ring-orange-400 focus:outline-0 focus:border-orange-400 placeholder:text-gray-400 placeholder:text-xs"
@@ -125,8 +79,8 @@ const handleSubmit = () => {
           <p class="text-xs text-gray-400 mt-1">
             Must be 11 digits starting with 01
           </p>
-          <p v-if="errors.phone" class="text-red-500 text-xs mt-1">
-            {{ errors.phone }}
+          <p v-if="phoneError" class="text-red-500 text-xs mt-1">
+            {{ phoneError }}
           </p>
         </div>
 
@@ -136,13 +90,13 @@ const handleSubmit = () => {
             >Email <span class="text-red-500">*</span></label
           >
           <input
-            v-model="form.email"
+            v-model="email"
             type="email"
             placeholder="Enter your email"
             class="w-full mt-1 px-3 py-1.5 border rounded-md text-sm border-orange-400 focus:ring-1 focus:ring-orange-400 focus:outline-0 focus:border-orange-400 placeholder:text-gray-400 placeholder:text-xs"
           />
-          <p v-if="errors.email" class="text-red-500 text-xs mt-1">
-            {{ errors.email }}
+          <p v-if="emailError" class="text-red-500 text-xs mt-1">
+            {{ emailError }}
           </p>
         </div>
 
@@ -153,7 +107,7 @@ const handleSubmit = () => {
           >
           <div class="relative">
             <input
-              v-model="form.password"
+              v-model="password"
               :type="showPassword ? 'text' : 'password'"
               placeholder="Enter password"
               class="w-full mt-1 px-3 py-1.5 border rounded-md pr-10 text-sm border-orange-400 focus:ring-1 focus:ring-orange-400 focus:outline-0 focus:border-orange-400 placeholder:text-gray-400 placeholder:text-xs"
@@ -168,8 +122,8 @@ const handleSubmit = () => {
               />
             </span>
           </div>
-          <p v-if="errors.password" class="text-red-500 text-xs mt-1">
-            {{ errors.password }}
+          <p v-if="passwordError" class="text-red-500 text-xs mt-1">
+            {{ passwordError }}
           </p>
         </div>
 
@@ -180,7 +134,7 @@ const handleSubmit = () => {
           >
           <div class="relative">
             <input
-              v-model="form.confirm"
+              v-model="confirm"
               :type="showConfirm ? 'text' : 'password'"
               placeholder="Confirm password"
               class="w-full mt-1 px-3 py-1.5 border rounded-md pr-10 text-sm border-orange-400 focus:ring-1 focus:ring-orange-400 focus:outline-0 focus:border-orange-400 placeholder:text-gray-400 placeholder:text-xs"
@@ -195,8 +149,8 @@ const handleSubmit = () => {
               />
             </span>
           </div>
-          <p v-if="errors.confirm" class="text-red-500 text-xs mt-1">
-            {{ errors.confirm }}
+          <p v-if="confirmError" class="text-red-500 text-xs mt-1">
+            {{ confirmError }}
           </p>
         </div>
 

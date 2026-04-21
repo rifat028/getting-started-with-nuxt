@@ -3,65 +3,18 @@ import { reactive, ref } from "vue";
 
 const showPassword = ref(false);
 
-const form = reactive({
-  email: "",
-  password: "",
-  remember: false,
+import { useField } from "vee-validate";
+import { useLoginValidation } from "@/composables/auth/useLoginValidation";
+
+const { handleSubmit } = useLoginValidation();
+
+const { value: email, errorMessage: emailError } = useField("email");
+const { value: password, errorMessage: passwordError } = useField("password");
+
+const onSubmit = handleSubmit((values) => {
+  alert("Login successful ✅");
+  console.log(values);
 });
-
-const errors = reactive({
-  email: "",
-  password: "",
-});
-
-const validate = () => {
-  errors.email = "";
-  errors.password = "";
-
-  let valid = true;
-
-  // Email validation
-  {
-    if (!form.email) {
-      errors.email = "Email is required";
-      valid = false;
-    } else if (!/^\S+@\S+\.\S+$/.test(form.email)) {
-      errors.email = "Invalid email format";
-      valid = false;
-    }
-  }
-
-  // Password validation
-  {
-    if (!form.password) {
-      errors.password = "Password is required";
-      valid = false;
-    } else if (form.password.length < 6) {
-      errors.password = "Minimum 6 characters required";
-      valid = false;
-    } else if (!/[a-z]/.test(form.password)) {
-      errors.password = "Minimum 1 lowercase character required";
-      valid = false;
-    } else if (!/[A-Z]/.test(form.password)) {
-      errors.password = "Minimum 1 uppercase character required";
-      valid = false;
-    } else if (!/\d/.test(form.password)) {
-      errors.password = "Minimum 1 number required";
-      valid = false;
-    } else if (!/[@$!%*?&]/.test(form.password)) {
-      errors.password = "Minimum 1 special character required";
-      valid = false;
-    }
-  }
-
-  return valid;
-};
-
-const handleSubmit = () => {
-  if (validate()) {
-    alert("Login successful (static)");
-  }
-};
 
 const togglePassword = () => {
   showPassword.value = !showPassword.value;
@@ -77,7 +30,7 @@ const togglePassword = () => {
         <img
           src="https://bdfunnelbuilder.com/BFLOGO.png"
           alt="Logo"
-          class="w-20 md:w-[120px]"
+          class="w-20 md:w-40"
         />
       </div>
 
@@ -95,7 +48,7 @@ const togglePassword = () => {
       </div>
 
       <!-- Form -->
-      <form @submit.prevent="handleSubmit" class="space-y-3">
+      <form @submit.prevent="onSubmit" class="space-y-3">
         <!-- Email -->
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -103,19 +56,19 @@ const togglePassword = () => {
           </label>
 
           <input
-            v-model="form.email"
-            type="phone"
+            v-model="email"
+            type="email"
             placeholder="Enter your email"
             class="w-full mt-1 px-3 py-2 border rounded-md text-sm focus:ring-1 focus:outline-none focus:ring-orange-400 focus:border-orange-400 placeholder:text-gray-400 placeholder:text-xs"
             :class="
-              errors.email
+              emailError
                 ? 'border-red-500'
                 : 'border-orange-500 focus:ring-1 focus:ring-orange-400'
             "
           />
 
-          <p v-if="errors.email" class="text-sm text-red-500 mt-1">
-            {{ errors.email }}
+          <p v-if="emailError" class="text-sm text-red-500 mt-1">
+            {{ emailError }}
           </p>
         </div>
 
@@ -135,12 +88,12 @@ const togglePassword = () => {
           <!-- Password input  -->
           <div class="relative">
             <input
-              v-model="form.password"
+              v-model="password"
               placeholder="Enter your password"
               :type="showPassword ? 'text' : 'password'"
               class="w-full mt-1 px-3 py-2 border rounded-md text-sm border-orange-400 focus:ring-1 focus:ring-orange-400 focus:outline-none focus:border-orange-400 placeholder:text-gray-400 placeholder:text-xs"
               :class="
-                errors.password
+                passwordError
                   ? 'border-red-500'
                   : 'border-gray-300 focus:ring-1 focus:ring-orange-400'
               "
@@ -158,14 +111,14 @@ const togglePassword = () => {
             </span>
           </div>
 
-          <p v-if="errors.password" class="text-sm text-red-500 mt-1">
-            {{ errors.password }}
+          <p v-if="passwordError" class="text-sm text-red-500 mt-1">
+            {{ passwordError }}
           </p>
         </div>
 
         <!-- Remember -->
         <div class="flex items-center gap-2">
-          <input v-model="form.remember" type="checkbox" class="w-4 h-4" />
+          <input v-model="remember" type="checkbox" class="w-4 h-4" />
           <span class="text-sm text-gray-700">Remember me</span>
         </div>
 

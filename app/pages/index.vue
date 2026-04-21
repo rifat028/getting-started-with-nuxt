@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>BD Funnel Builder</h1>
+    <h1 class="">BD Funnel Builder</h1>
   </div>
 </template>
 

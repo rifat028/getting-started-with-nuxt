@@ -7,9 +7,11 @@
       >
         <!-- Logo -->
         <NuxtLink to="/" class="text-lg font-bold text-blue-600 text-center">
-          BD Funnel <br /><span class="text-red-400 font-semibold"
-            >Builder</span
-          >
+          <img
+            src="https://bdfunnelbuilder.com/BFLOGO.png"
+            alt="Logo"
+            class="w-20 md:w-[120px]"
+          />
         </NuxtLink>
 
         <!-- Auth Links -->

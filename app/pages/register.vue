@@ -76,7 +76,7 @@ const onSubmit = handleSubmit((values) => {
             placeholder="Enter Bangladeshi phone number"
             class="w-full mt-1 px-3 py-1.5 border rounded-md text-sm border-orange-400 focus:ring-1 focus:ring-orange-400 focus:outline-0 focus:border-orange-400 placeholder:text-gray-400 placeholder:text-xs"
           />
-          <p class="text-xs text-gray-400 mt-1">
+          <p class="text-xs text-gray-700 mt-1">
             Must be 11 digits starting with 01
           </p>
           <p v-if="phoneError" class="text-red-500 text-xs mt-1">

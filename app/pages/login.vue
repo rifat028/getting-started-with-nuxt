@@ -1,13 +1,10 @@
 <script setup>
 import { reactive, ref } from "vue";
-
-const showPassword = ref(false);
-
 import { useField } from "vee-validate";
 import { useLoginValidation } from "@/composables/auth/useLoginValidation";
 
+const showPassword = ref(false);
 const { handleSubmit } = useLoginValidation();
-
 const { value: email, errorMessage: emailError } = useField("email");
 const { value: password, errorMessage: passwordError } = useField("password");
 
@@ -67,7 +64,7 @@ const togglePassword = () => {
             "
           />
 
-          <p v-if="emailError" class="text-sm text-red-500 mt-1">
+          <p v-if="emailError" class="text-sm text-blue-500 mt-1">
             {{ emailError }}
           </p>
         </div>

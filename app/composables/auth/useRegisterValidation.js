@@ -30,45 +30,6 @@ export const useRegisterValidation = () => {
       .required("Password is required")
       .min(6, "Minimum 6 characters")
       .matches(/[a-z]/, "1 lowercase required")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      
       .matches(/[A-Z]/, "1 uppercase required")
       .matches(/\d/, "1 number required")
       .matches(/[@$!%*?&]/, "1 special character required"),

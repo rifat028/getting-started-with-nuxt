@@ -3,13 +3,19 @@ const model = defineModel();
 </script>
 
 <template>
-  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
-    <div>
-      <h1 class="text-2xl font-bold text-gray-800">Explore Products</h1>
+  <div
+    class="flex flex-col items-center justify-between gap-4 space-y-4 mb-5 md:mb-20"
+  >
+    <!-- //headline -->
+    <div class="flex flex-col justify-center items-center">
+      <h1 class="text-2xl md:text-4xl font-bold text-gray-800">
+        Explore Products
+      </h1>
       <p class="text-gray-500 text-sm">Find your perfect item</p>
     </div>
 
-    <div class="relative w-full md:w-80">
+    <!-- //search box -->
+    <div class="relative w-full md:w-180 mx-4">
       <input
         v-model="model"
         type="text"

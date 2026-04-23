@@ -2,17 +2,33 @@
 import ProductHeader from "@/components/product/header.vue";
 import ProductCard from "@/components/product/card.vue";
 import ProductFilter from "@/components/product/filter.vue";
+import ProductCardSkeleton from "@/components/product/card-skeleton.vue";
 
 definePageMeta({
   layout: "primary-layout",
 });
 
-// Fetch products (SSR)
-const {
-  data: products,
-  pending,
-  error,
-} = await useFetch("https://fakestoreapi.com/products");
+const cart = ref([]);
+const favorites = ref([]);
+
+// ✅ Async fetch function
+const products = ref([]);
+const loading = ref(false);
+const error = ref(null);
+
+const fetchProducts = async () => {
+  loading.value = true;
+  error.value = null;
+
+  try {
+    products.value = await $fetch("https://fakestoreapi.com/products");
+  } catch (err) {
+    error.value = err;
+  } finally {
+    loading.value = false;
+  }
+};
+fetchProducts();
 
 // State
 const search = ref("");
@@ -34,21 +50,44 @@ const filteredProducts = computed(() => {
   if (!products.value) return [];
 
   return products.value.filter((p) => {
+    //search filtering (boolean condition)
     const matchSearch = p.title
       .toLowerCase()
       .includes(search.value.toLowerCase());
-
+    //price filtering (boolean condition)
     const matchPrice =
       (!filters.minPrice || p.price >= filters.minPrice) &&
       (!filters.maxPrice || p.price <= filters.maxPrice);
-
+    //rating filtering (boolean condition)
     const matchRating = !filters.rating || p.rating.rate >= filters.rating;
-
+    //category filtering (boolean condition)
     const matchCategory = !filters.category || p.category === filters.category;
 
     return matchSearch && matchPrice && matchRating && matchCategory;
   });
 });
+
+//add to cart
+const addToCart = (product) => {
+  const existing = cart.value.find((i) => i.id === product.id);
+
+  if (existing) {
+    existing.quantity++;
+  } else {
+    cart.value.push({ ...product, quantity: 1 });
+  }
+};
+
+//add to favorite
+const toggleFavorite = (product) => {
+  const exists = favorites.value.find((i) => i.id === product.id);
+
+  if (exists) {
+    favorites.value = favorites.value.filter((i) => i.id !== product.id);
+  } else {
+    favorites.value.push(product);
+  }
+};
 </script>
 
 <template>
@@ -64,7 +103,13 @@ const filteredProducts = computed(() => {
 
       <!-- Products -->
       <div class="md:w-3/4">
-        <div v-if="pending">Loading...</div>
+        <div
+          v-if="loading"
+          class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
+        >
+          <ProductCardSkeleton v-for="n in 8" :key="n" />
+        </div>
+
         <div v-else-if="error">Error loading products</div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -72,6 +117,9 @@ const filteredProducts = computed(() => {
             v-for="product in filteredProducts"
             :key="product.id"
             :product="product"
+            :favorites="favorites"
+            @add-to-cart="addToCart"
+            @toggle-favorite="toggleFavorite"
           />
         </div>
       </div>

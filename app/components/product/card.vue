@@ -1,6 +1,13 @@
 <script setup>
-defineProps({
+const props = defineProps({
   product: Object,
+  favorites: Array,
+});
+
+const emit = defineEmits(["add-to-cart", "toggle-favorite"]);
+
+const isFavorite = computed(() => {
+  return props.favorites.some((i) => i.id === props.product.id);
 });
 </script>
 
@@ -17,8 +24,12 @@ defineProps({
     </div>
 
     <!-- Info -->
-    <h2 class="font-semibold text-gray-800 line-clamp-2 mb-1">
-      {{ product.title }}
+    <h2 class="font-semibold text-gray-800 mb-1">
+      {{
+        product.title.length > 40
+          ? product.title.slice(0, 40) + "..."
+          : product.title
+      }}
     </h2>
 
     <p class="text-sm text-gray-500 mb-2 capitalize">
@@ -38,15 +49,17 @@ defineProps({
     <!-- Actions -->
     <div class="flex justify-between items-center">
       <button
+        @click="emit('add-to-cart', product)"
         class="flex-1 mr-2 bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition text-sm"
       >
         Add to Cart
       </button>
 
       <button
+        @click="emit('toggle-favorite', product)"
         class="w-10 h-10 flex items-center justify-center border rounded-lg hover:bg-red-50 text-red-500 transition"
       >
-        ♥
+        <Icon name="el:heart" />
       </button>
     </div>
   </div>

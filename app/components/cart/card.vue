@@ -1,7 +1,10 @@
 <script setup>
-defineProps({
+const props = defineProps({
   item: Object,
 });
+
+// ✅ define emits
+const emit = defineEmits(["remove", "increase", "decrease"]);
 </script>
 
 <template>
@@ -31,13 +34,30 @@ defineProps({
       <div class="flex items-center justify-between mt-4">
         <!-- Quantity -->
         <div class="flex items-center border rounded-lg overflow-hidden">
-          <button class="px-3 py-1 hover:bg-gray-100">-</button>
+          <button
+            @click="emit('decrease', item.id)"
+            class="px-3 py-1 hover:bg-gray-100"
+          >
+            -
+          </button>
+
           <span class="px-4">{{ item.quantity || 1 }}</span>
-          <button class="px-3 py-1 hover:bg-gray-100">+</button>
+
+          <button
+            @click="emit('increase', item.id)"
+            class="px-3 py-1 hover:bg-gray-100"
+          >
+            +
+          </button>
         </div>
 
         <!-- Remove -->
-        <button class="text-red-500 text-sm hover:underline">Remove</button>
+        <button
+          @click="emit('remove', item.id)"
+          class="text-red-500 text-sm hover:underline"
+        >
+          Remove
+        </button>
       </div>
     </div>
   </div>

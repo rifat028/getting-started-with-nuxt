@@ -8,10 +8,22 @@ definePageMeta({
   layout: "primary-layout",
 });
 
-const cart = ref([]);
-const favorites = ref([]);
 
-// ✅ Async fetch function
+// ✅ Cart & Favorites (with localStorage + SSR safety)
+const cart = ref(
+  process.client
+    ? JSON.parse(localStorage.getItem("cart")) || []
+    : []
+);
+
+const favorites = ref(
+  process.client
+    ? JSON.parse(localStorage.getItem("favorites")) || []
+    : []
+);
+
+
+// ✅ Products fetching
 const products = ref([]);
 const loading = ref(false);
 const error = ref(null);
@@ -28,9 +40,14 @@ const fetchProducts = async () => {
     loading.value = false;
   }
 };
-fetchProducts();
 
-// State
+// ✅ Run only on client
+onMounted(() => {
+  fetchProducts();
+});
+
+
+// 🔍 Search & Filters
 const search = ref("");
 const filters = reactive({
   minPrice: null,
@@ -39,35 +56,44 @@ const filters = reactive({
   category: "",
 });
 
-// Extract categories
+
+// 🏷 Extract categories
 const categories = computed(() => {
   if (!products.value) return [];
   return [...new Set(products.value.map((p) => p.category))];
 });
 
-// Filtered products
+
+// 🎯 Filtered products
 const filteredProducts = computed(() => {
   if (!products.value) return [];
 
   return products.value.filter((p) => {
-    //search filtering (boolean condition)
     const matchSearch = p.title
       .toLowerCase()
       .includes(search.value.toLowerCase());
-    //price filtering (boolean condition)
+
     const matchPrice =
       (!filters.minPrice || p.price >= filters.minPrice) &&
       (!filters.maxPrice || p.price <= filters.maxPrice);
-    //rating filtering (boolean condition)
-    const matchRating = !filters.rating || p.rating.rate >= filters.rating;
-    //category filtering (boolean condition)
-    const matchCategory = !filters.category || p.category === filters.category;
 
-    return matchSearch && matchPrice && matchRating && matchCategory;
+    const matchRating =
+      !filters.rating || p.rating.rate >= filters.rating;
+
+    const matchCategory =
+      !filters.category || p.category === filters.category;
+
+    return (
+      matchSearch &&
+      matchPrice &&
+      matchRating &&
+      matchCategory
+    );
   });
 });
 
-//add to cart
+
+// 🛒 Add to Cart
 const addToCart = (product) => {
   const existing = cart.value.find((i) => i.id === product.id);
 
@@ -76,33 +102,48 @@ const addToCart = (product) => {
   } else {
     cart.value.push({ ...product, quantity: 1 });
   }
+
+  localStorage.setItem("cart", JSON.stringify(cart.value));
 };
 
-//add to favorite
+
+// ❤️ Toggle Favorite
 const toggleFavorite = (product) => {
   const exists = favorites.value.find((i) => i.id === product.id);
 
   if (exists) {
-    favorites.value = favorites.value.filter((i) => i.id !== product.id);
+    favorites.value = favorites.value.filter(
+      (i) => i.id !== product.id
+    );
   } else {
     favorites.value.push(product);
   }
+
+  localStorage.setItem("favorites", JSON.stringify(favorites.value));
 };
 </script>
 
+
 <template>
   <div class="p-4">
+    
     <!-- Header -->
     <ProductHeader v-model="search" />
 
     <div class="flex flex-col md:flex-row gap-4 mt-4">
+      
       <!-- Filter -->
       <div class="md:w-1/4">
-        <ProductFilter :categories="categories" v-model:filters="filters" />
+        <ProductFilter
+          :categories="categories"
+          v-model:filters="filters"
+        />
       </div>
 
       <!-- Products -->
       <div class="md:w-3/4">
+        
+        <!-- Skeleton Loader -->
         <div
           v-if="loading"
           class="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"
@@ -110,9 +151,16 @@ const toggleFavorite = (product) => {
           <ProductCardSkeleton v-for="n in 8" :key="n" />
         </div>
 
-        <div v-else-if="error">Error loading products</div>
+        <!-- Error -->
+        <div v-else-if="error" class="text-red-500">
+          Error loading products
+        </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <!-- Products Grid -->
+        <div
+          v-else
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+        >
           <ProductCard
             v-for="product in filteredProducts"
             :key="product.id"
@@ -122,6 +170,7 @@ const toggleFavorite = (product) => {
             @toggle-favorite="toggleFavorite"
           />
         </div>
+
       </div>
     </div>
   </div>

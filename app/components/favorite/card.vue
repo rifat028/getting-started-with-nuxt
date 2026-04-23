@@ -1,7 +1,10 @@
 <script setup>
-defineProps({
+const props = defineProps({
   item: Object,
 });
+
+// ✅ define emits
+const emit = defineEmits(["remove", "add-to-cart"]);
 </script>
 
 <template>
@@ -34,15 +37,17 @@ defineProps({
 
     <!-- Actions -->
     <div class="flex gap-2 mt-4">
-      <!-- Add to Cart -->
+      <!-- ✅ Add to Cart -->
       <button
+        @click="emit('add-to-cart', item)"
         class="flex-1 bg-blue-600 text-white text-sm py-2 rounded-lg hover:bg-blue-700 transition"
       >
         Add to Cart
       </button>
 
-      <!-- Remove -->
+      <!-- ✅ Remove -->
       <button
+        @click="emit('remove', item.id)"
         class="px-3 text-red-500 border border-red-200 rounded-lg hover:bg-red-50 transition"
       >
         ✕

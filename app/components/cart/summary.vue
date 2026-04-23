@@ -21,12 +21,29 @@ const subtotal = computed(() => {
         :key="item.id"
         class="flex justify-between text-sm"
       >
-        <span class="line-clamp-1">
-          {{ item.title }} × {{ item.quantity || 1 }}
-        </span>
-        <span class="font-medium">
-          ${{ (item.price * (item.quantity || 1)).toFixed(2) }}
-        </span>
+        <div
+          class="flex items-center justify-between py-3 px-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition text-sm w-full"
+        >
+          <!-- Left: Title + Quantity -->
+          <div class="flex-1 pr-2">
+            <span class="block truncate text-gray-700 font-medium">
+              {{
+                item.title.length > 30
+                  ? item.title.slice(0, 30) + "..."
+                  : item.title
+              }}
+            </span>
+
+            <span class="text-xs text-gray-400">
+              Qty: {{ item.quantity || 1 }}
+            </span>
+          </div>
+
+          <!-- Right: Price -->
+          <div class="w-20 text-right font-semibold text-gray-800">
+            ${{ (item.price * (item.quantity || 1)).toFixed(2) }}
+          </div>
+        </div>
       </div>
     </div>
 

@@ -2,6 +2,8 @@
 import { getCart, getFavorites } from "@/utils/navbar/storage";
 import LayoutFooter from "~/components/layout/layoutFooter.vue";
 
+const isOpen = ref(false);
+
 const cart = ref([]);
 const favorites = ref([]);
 
@@ -37,9 +39,14 @@ onMounted(() => {
           </div>
         </a>
 
+        <!-- Mobile Toggle -->
+        <button @click="isOpen = !isOpen" class="md:hidden text-white text-2xl">
+          ☰
+        </button>
+
         <!-- Navigation -->
         <div
-          class="flex items-center gap-8 text-sm font-medium px-4 py-2 transition-colors duration-300"
+          class="hidden md:flex items-center gap-8 text-sm font-medium px-4 py-2 transition-colors duration-300"
         >
           <!-- Home -->
           <NuxtLink
@@ -105,6 +112,39 @@ onMounted(() => {
             ></div
           ></NuxtLink>
         </div>
+      </div>
+      <!-- Mobile Menu -->
+      <div
+        v-if="isOpen"
+        class="md:hidden px-6 pb-6 space-y-4 bg-gray-900 border-t border-gray-700"
+      >
+        <NuxtLink to="/" @click="isOpen = false" class="block text-gray-300">
+          Home
+        </NuxtLink>
+
+        <NuxtLink
+          to="/product"
+          @click="isOpen = false"
+          class="block text-gray-300"
+        >
+          Products
+        </NuxtLink>
+
+        <NuxtLink
+          to="/cart"
+          @click="isOpen = false"
+          class="block text-gray-300"
+        >
+          Cart ({{ cart.length }})
+        </NuxtLink>
+
+        <NuxtLink
+          to="/favorite"
+          @click="isOpen = false"
+          class="block text-green-400"
+        >
+          Favorites ({{ favorites.length }})
+        </NuxtLink>
       </div>
     </nav>
 

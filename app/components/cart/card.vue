@@ -12,8 +12,13 @@ const emit = defineEmits(["remove", "increase", "decrease"]);
     class="bg-white rounded-2xl shadow-sm hover:shadow-md transition p-4 flex flex-col md:flex-row gap-4"
   >
     <!-- Image -->
-    <div class="w-full md:w-32 h-32 flex items-center justify-center">
-      <img :src="item.image" class="h-full object-contain" />
+    <div
+      class="w-full md:w-32 h-32 flex items-center justify-center bg-gray-50 rounded-lg"
+    >
+      <img
+        :src="item.image"
+        class="h-full w-full object-contain transition transform hover:scale-105 duration-700"
+      />
     </div>
 
     <!-- Info -->
@@ -23,20 +28,23 @@ const emit = defineEmits(["remove", "increase", "decrease"]);
           {{ item.title }}
         </h2>
 
-        <p class="text-sm text-gray-400 mt-1 capitalize">
-          {{ item.category }}
+        <p class="text-green-600 font-bold text-lg mt-2">
+          ${{ item.price }}
+          <span class="text-sm text-gray-500 ml-1"
+            >(${{ item.price }} each)</span
+          >
         </p>
-
-        <p class="text-blue-600 font-bold mt-2">${{ item.price }}</p>
       </div>
 
       <!-- Actions -->
       <div class="flex items-center justify-between mt-4">
         <!-- Quantity -->
-        <div class="flex items-center border rounded-lg overflow-hidden">
+        <div
+          class="flex items-center border border-gray-300 rounded-lg overflow-hidden"
+        >
           <button
             @click="emit('decrease', item.id)"
-            class="px-3 py-1 hover:bg-gray-100"
+            class="px-3 py-1 hover:bg-gray-100 border-r border-gray-300"
           >
             -
           </button>
@@ -45,7 +53,7 @@ const emit = defineEmits(["remove", "increase", "decrease"]);
 
           <button
             @click="emit('increase', item.id)"
-            class="px-3 py-1 hover:bg-gray-100"
+            class="px-3 py-1 hover:bg-gray-100 border-l border-gray-300"
           >
             +
           </button>
@@ -54,9 +62,9 @@ const emit = defineEmits(["remove", "increase", "decrease"]);
         <!-- Remove -->
         <button
           @click="emit('remove', item.id)"
-          class="text-red-500 text-sm hover:underline"
+          class="text-red-500 text-sm px-2 py-1 hover:bg-red-500 hover:text-white hover:scale-105 rounded-xl transition transform duration-300 hover:font-semibold"
         >
-          Remove
+          X
         </button>
       </div>
     </div>

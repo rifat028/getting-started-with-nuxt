@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import LayoutFooter from "~/components/layout/layoutFooter.vue";
+</script>
+
 <template>
   <div class="min-h-screen flex flex-col bg-gray-100">
     <!-- Navbar -->
@@ -6,13 +10,13 @@
         class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center"
       >
         <!-- Logo -->
-        <NuxtLink to="/" class="text-lg font-bold text-blue-600">
+        <a href="/" class="text-lg font-bold text-blue-600">
           <img
             src="https://bdfunnelbuilder.com/BFLOGO.png"
             alt="Logo"
-            class="w-20 md:w-[120px]"
+            class="w-20 md:w-30"
           />
-        </NuxtLink>
+        </a>
 
         <!-- Navigation Links -->
         <div class="flex items-center gap-6">
@@ -21,23 +25,7 @@
             to="/product"
             class="text-gray-600 hover:text-blue-500 transition"
           >
-            Products
-          </NuxtLink>
-
-          <!-- Cart -->
-          <NuxtLink
-            to="/cart"
-            class="text-gray-600 hover:text-blue-500 transition"
-          >
-            Cart
-          </NuxtLink>
-
-          <!-- Favorite -->
-          <NuxtLink
-            to="/favorite"
-            class="text-gray-600 hover:text-blue-500 transition"
-          >
-            Favorite
+            E-commerce
           </NuxtLink>
 
           <!-- Divider -->
@@ -50,13 +38,6 @@
           >
             Login
           </NuxtLink>
-
-          <NuxtLink
-            to="/register"
-            class="bg-blue-600 text-white px-4 py-1.5 rounded-lg hover:bg-blue-700 transition"
-          >
-            Register
-          </NuxtLink>
         </div>
       </div>
     </nav>
@@ -65,5 +46,7 @@
     <main class="flex-1 p-4">
       <slot />
     </main>
+
+    <LayoutFooter></LayoutFooter>
   </div>
 </template>

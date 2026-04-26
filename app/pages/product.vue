@@ -3,25 +3,20 @@ import ProductHeader from "@/components/product/header.vue";
 import ProductCard from "@/components/product/card.vue";
 import ProductFilter from "@/components/product/filter.vue";
 import ProductCardSkeleton from "@/components/product/card-skeleton.vue";
+import {
+  getCart,
+  setCart,
+  getFavorites,
+  setFavorites,
+} from "@/utils/navbar/storage";
 
 definePageMeta({
-  layout: "primary-layout",
+  layout: "ecommerce-layout",
 });
 
-
 // ✅ Cart & Favorites (with localStorage + SSR safety)
-const cart = ref(
-  process.client
-    ? JSON.parse(localStorage.getItem("cart")) || []
-    : []
-);
-
-const favorites = ref(
-  process.client
-    ? JSON.parse(localStorage.getItem("favorites")) || []
-    : []
-);
-
+const cart = ref(getCart());
+const favorites = ref(getFavorites());
 
 // ✅ Products fetching
 const products = ref([]);
@@ -41,11 +36,23 @@ const fetchProducts = async () => {
   }
 };
 
+const sync = () => {
+  cart.value = getCart();
+  favorites.value = getFavorites();
+};
+
 // ✅ Run only on client
 onMounted(() => {
   fetchProducts();
+
+  window.addEventListener("cart-updated", sync);
+  window.addEventListener("favorite-updated", sync);
 });
 
+onUnmounted(() => {
+  window.removeEventListener("cart-updated", sync);
+  window.removeEventListener("favorite-updated", sync);
+});
 
 // 🔍 Search & Filters
 const search = ref("");
@@ -56,13 +63,11 @@ const filters = reactive({
   category: "",
 });
 
-
 // 🏷 Extract categories
 const categories = computed(() => {
   if (!products.value) return [];
   return [...new Set(products.value.map((p) => p.category))];
 });
-
 
 // 🎯 Filtered products
 const filteredProducts = computed(() => {
@@ -77,21 +82,13 @@ const filteredProducts = computed(() => {
       (!filters.minPrice || p.price >= filters.minPrice) &&
       (!filters.maxPrice || p.price <= filters.maxPrice);
 
-    const matchRating =
-      !filters.rating || p.rating.rate >= filters.rating;
+    const matchRating = !filters.rating || p.rating.rate >= filters.rating;
 
-    const matchCategory =
-      !filters.category || p.category === filters.category;
+    const matchCategory = !filters.category || p.category === filters.category;
 
-    return (
-      matchSearch &&
-      matchPrice &&
-      matchRating &&
-      matchCategory
-    );
+    return matchSearch && matchPrice && matchRating && matchCategory;
   });
 });
-
 
 // 🛒 Add to Cart
 const addToCart = (product) => {
@@ -103,46 +100,35 @@ const addToCart = (product) => {
     cart.value.push({ ...product, quantity: 1 });
   }
 
-  localStorage.setItem("cart", JSON.stringify(cart.value));
+  setCart(cart.value);
 };
-
 
 // ❤️ Toggle Favorite
 const toggleFavorite = (product) => {
   const exists = favorites.value.find((i) => i.id === product.id);
 
   if (exists) {
-    favorites.value = favorites.value.filter(
-      (i) => i.id !== product.id
-    );
+    favorites.value = favorites.value.filter((i) => i.id !== product.id);
   } else {
     favorites.value.push(product);
   }
-
-  localStorage.setItem("favorites", JSON.stringify(favorites.value));
+  setFavorites(favorites.value);
 };
 </script>
 
-
 <template>
-  <div class="p-4">
-    
+  <div class="p-4 bg-linear-to-b from-green-50 to-white md:mx-10">
     <!-- Header -->
     <ProductHeader v-model="search" />
 
     <div class="flex flex-col md:flex-row gap-4 mt-4">
-      
       <!-- Filter -->
       <div class="md:w-1/4">
-        <ProductFilter
-          :categories="categories"
-          v-model:filters="filters"
-        />
+        <ProductFilter :categories="categories" v-model:filters="filters" />
       </div>
 
       <!-- Products -->
       <div class="md:w-3/4">
-        
         <!-- Skeleton Loader -->
         <div
           v-if="loading"
@@ -152,9 +138,7 @@ const toggleFavorite = (product) => {
         </div>
 
         <!-- Error -->
-        <div v-else-if="error" class="text-red-500">
-          Error loading products
-        </div>
+        <div v-else-if="error" class="text-red-500">Error loading products</div>
 
         <!-- Products Grid -->
         <div
@@ -170,7 +154,6 @@ const toggleFavorite = (product) => {
             @toggle-favorite="toggleFavorite"
           />
         </div>
-
       </div>
     </div>
   </div>

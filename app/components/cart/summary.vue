@@ -3,64 +3,72 @@ const props = defineProps({
   items: Array,
 });
 
+// 🧠 Calculations
 const subtotal = computed(() => {
   return props.items.reduce((sum, item) => {
     return sum + item.price * (item.quantity || 1);
   }, 0);
 });
+
+const shipping = computed(() => {
+  return subtotal.value > 0 ? 2 : 0;
+});
+
+const tax = computed(() => {
+  return subtotal.value * 0.1;
+});
+
+const total = computed(() => {
+  return subtotal.value + shipping.value + tax.value;
+});
 </script>
 
 <template>
-  <div class="bg-white rounded-2xl shadow-sm p-5 sticky top-6">
-    <h2 class="text-lg font-semibold text-gray-800 mb-4">Order Summary</h2>
+  <div class="bg-white rounded-2xl shadow-md p-6 space-y-4">
+    <!-- Title -->
+    <h2 class="text-xl font-bold text-gray-800">Order Summary</h2>
 
-    <!-- Items -->
-    <div class="space-y-3 max-h-60 overflow-y-auto pr-1">
-      <div
-        v-for="item in items"
-        :key="item.id"
-        class="flex justify-between text-sm"
-      >
-        <div
-          class="flex items-center justify-between py-3 px-3 rounded-lg bg-gray-50 hover:bg-gray-100 transition text-sm w-full"
-        >
-          <!-- Left: Title + Quantity -->
-          <div class="flex-1 pr-2">
-            <span class="block truncate text-gray-700 font-medium">
-              {{
-                item.title.length > 30
-                  ? item.title.slice(0, 30) + "..."
-                  : item.title
-              }}
-            </span>
+    <!-- Subtotal -->
+    <div class="flex justify-between text-gray-600">
+      <span>Subtotal</span>
+      <span class="font-medium text-gray-950">${{ subtotal.toFixed(2) }}</span>
+    </div>
 
-            <span class="text-xs text-gray-400">
-              Qty: {{ item.quantity || 1 }}
-            </span>
-          </div>
+    <!-- Shipping -->
+    <div class="flex justify-between text-gray-600">
+      <span>Shipping</span>
+      <span class="font-medium text-gray-950">${{ shipping.toFixed(2) }}</span>
+    </div>
 
-          <!-- Right: Price -->
-          <div class="w-20 text-right font-semibold text-gray-800">
-            ${{ (item.price * (item.quantity || 1)).toFixed(2) }}
-          </div>
-        </div>
-      </div>
+    <!-- Tax -->
+    <div class="flex justify-between text-gray-600">
+      <span>Tax</span>
+      <span class="font-medium text-gray-950">${{ tax.toFixed(2) }}</span>
     </div>
 
     <!-- Divider -->
-    <div class="border-t my-4"></div>
+    <div class="border-t pt-4 mt-8 border-gray-200"></div>
 
-    <!-- Subtotal -->
-    <div class="flex justify-between font-semibold text-gray-800">
-      <span>Subtotal</span>
-      <span>${{ subtotal.toFixed(2) }}</span>
+    <!-- Total -->
+    <div class="flex justify-between items-center">
+      <span class="text-lg font-bold text-gray-900"> Total </span>
+      <span class="text-xl font-bold text-green-600">
+        ${{ total.toFixed(2) }}
+      </span>
     </div>
 
-    <!-- Checkout -->
+    <!-- Checkout Button -->
     <button
-      class="w-full mt-5 bg-blue-600 text-white py-2 rounded-xl hover:bg-blue-700 transition"
+      class="w-full py-3 mt-3 rounded-xl bg-linear-to-r from-gray-900 to-gray-700 text-white font-medium hover:from-green-600 hover:to-green-700 transition transform shadow-md"
     >
       Proceed to Checkout
     </button>
+
+    <!-- Secure Note -->
+    <p
+      class="text-center text-sm text-gray-400 flex items-center justify-center gap-2"
+    >
+      🔒 Secure checkout
+    </p>
   </div>
 </template>

@@ -1,31 +1,38 @@
 <script setup>
 import FavoriteHeader from "@/components/favorite/header.vue";
 import FavoriteCard from "@/components/favorite/card.vue";
+import { getFavorites, setFavorites, getCart, setCart } from "@/utils/navbar/storage";
 
 definePageMeta({
-  layout: "primary-layout",
+  layout: "ecommerce-layout",
 });
 
-// ✅ Favorites state
-const favorites = ref([]);
+// ✅ State (use utils)
+const favorites = ref(getFavorites());
 
-// ✅ Load from localStorage
-onMounted(() => {
-  const saved = localStorage.getItem("favorites");
-  if (saved) {
-    favorites.value = JSON.parse(saved);
-  }
-});
-
-// ✅ Remove from favorites
-const removeFavorite = (id) => {
-  favorites.value = favorites.value.filter((i) => i.id !== id);
-  localStorage.setItem("favorites", JSON.stringify(favorites.value));
+// ✅ Sync function
+const sync = () => {
+  favorites.value = getFavorites();
 };
 
-// ✅ Add to cart (optional but useful)
+// ✅ Listen for updates
+onMounted(() => {
+  window.addEventListener("favorite-updated", sync);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("favorite-updated", sync);
+});
+
+// ✅ Remove from favorites (UPDATED)
+const removeFavorite = (id) => {
+  favorites.value = favorites.value.filter((i) => i.id !== id);
+  setFavorites(favorites.value); // 🔥 important
+};
+
+// ✅ Add to cart (UPDATED)
 const addToCart = (product) => {
-  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  let cart = getCart();
 
   const existing = cart.find((i) => i.id === product.id);
 
@@ -35,12 +42,12 @@ const addToCart = (product) => {
     cart.push({ ...product, quantity: 1 });
   }
 
-  localStorage.setItem("cart", JSON.stringify(cart));
+  setCart(cart); // 🔥 important
 };
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto px-4 py-6">
+  <div class="mx-auto p-4 md:p-10">
     <FavoriteHeader />
 
     <!-- Empty -->

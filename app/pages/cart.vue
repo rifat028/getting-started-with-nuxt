@@ -2,56 +2,60 @@
 import CartHeader from "@/components/cart/header.vue";
 import CartCard from "@/components/cart/card.vue";
 import CartSummary from "@/components/cart/summary.vue";
+import { getCart, setCart } from "@/utils/navbar/storage";
 
 definePageMeta({
-  layout: "primary-layout",
+  layout: "ecommerce-layout",
 });
 
-// ✅ Cart state
-const cart = ref([]);
+// ✅ State
+const cart = ref(getCart());
 
-// ✅ Load from localStorage when page loads
-onMounted(() => {
-  const saved = localStorage.getItem("cart");
-  if (saved) {
-    cart.value = JSON.parse(saved);
-  }
-});
-
-
-// ✅ Remove item
-const removeFromCart = (id) => {
-  cart.value = cart.value.filter((i) => i.id !== id);
-  localStorage.setItem("cart", JSON.stringify(cart.value));
+// ✅ Sync
+const sync = () => {
+  cart.value = getCart();
 };
 
+onMounted(() => {
+  window.addEventListener("cart-updated", sync);
+});
 
-// ✅ Increase quantity
+onUnmounted(() => {
+  window.removeEventListener("cart-updated", sync);
+});
+
+// ✅ Remove
+const removeFromCart = (id) => {
+  cart.value = cart.value.filter((i) => i.id !== id);
+  setCart(cart.value); // 🔥 important
+};
+
+// ✅ Increase
 const increaseQty = (id) => {
   const item = cart.value.find((i) => i.id === id);
   if (item) item.quantity++;
-  localStorage.setItem("cart", JSON.stringify(cart.value));
+
+  setCart(cart.value); // 🔥 important
 };
 
-
-// ✅ Decrease quantity
+// ✅ Decrease
 const decreaseQty = (id) => {
   const item = cart.value.find((i) => i.id === id);
   if (item && item.quantity > 1) item.quantity--;
-  localStorage.setItem("cart", JSON.stringify(cart.value));
+
+  setCart(cart.value); // 🔥 important
 };
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto px-4 py-6">
-    
+  <div
+    class="mx-auto md:mx-5 m-0 px-4 py-6 bg-linear-to-b from-bg-green-50 to-bg-white min-h-screen"
+  >
     <CartHeader />
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-      
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6">
       <!-- Cart Items -->
       <div class="lg:col-span-2 space-y-4">
-        
         <!-- Empty -->
         <div v-if="cart.length === 0" class="text-center py-16 text-gray-500">
           🛒 Your cart is empty
@@ -72,7 +76,6 @@ const decreaseQty = (id) => {
       <div class="lg:col-span-1">
         <CartSummary :items="cart" />
       </div>
-
     </div>
   </div>
 </template>

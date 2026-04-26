@@ -3,55 +3,52 @@ const props = defineProps({
   item: Object,
 });
 
-// ✅ define emits
 const emit = defineEmits(["remove", "add-to-cart"]);
 </script>
 
 <template>
   <div
-    class="bg-white rounded-2xl shadow-sm hover:shadow-lg transition duration-300 p-4 flex flex-col"
+    class="group bg-white rounded-2xl shadow-md hover:shadow-xl transition relative"
   >
+    <!-- Remove (X button) -->
+    <button
+      @click="emit('remove', item.id)"
+      class="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-lg hover:bg-green-100 text-gray-500 transition hover:font-bold hover:text-red-500"
+    >
+      ✕
+    </button>
+
     <!-- Image -->
-    <div class="h-40 flex items-center justify-center mb-4">
+    <div class="flex justify-center items-center h-40 mb-4 bg-gray-50">
       <img
         :src="item.image"
-        class="h-full object-contain transition-transform duration-300 hover:scale-105"
+        class="h-full object-contain transition transform duration-500 hover:scale-105 p-4"
       />
     </div>
+    <div class="p-4">
+      <!-- Title -->
+      <h2 class="text-gray-800 font-medium text-sm mb-2 line-clamp-1">
+        {{
+          item.title.length > 25 ? item.title.slice(0, 25) + "..." : item.title
+        }}
+      </h2>
 
-    <!-- Title -->
-    <h2 class="text-sm font-semibold text-gray-800 line-clamp-2">
-      {{ item.title }}
-    </h2>
+      <!-- Bottom Row -->
+      <div class="flex items-center justify-between">
+        <!-- Price -->
+        <span class="text-green-600 font-bold text-lg">
+          ${{ item.price }}
+        </span>
 
-    <!-- Category -->
-    <p class="text-xs text-gray-400 mt-1 capitalize">
-      {{ item.category }}
-    </p>
-
-    <!-- Price -->
-    <p class="text-blue-600 font-bold mt-2 text-lg">${{ item.price }}</p>
-
-    <!-- Rating -->
-    <p class="text-sm text-yellow-500">⭐ {{ item.rating.rate }}</p>
-
-    <!-- Actions -->
-    <div class="flex gap-2 mt-4">
-      <!-- ✅ Add to Cart -->
-      <button
-        @click="emit('add-to-cart', item)"
-        class="flex-1 bg-blue-600 text-white text-sm py-2 rounded-lg hover:bg-blue-700 transition"
-      >
-        Add to Cart
-      </button>
-
-      <!-- ✅ Remove -->
-      <button
-        @click="emit('remove', item.id)"
-        class="px-3 text-red-500 border border-red-200 rounded-lg hover:bg-red-50 transition"
-      >
-        ✕
-      </button>
+        <!-- Add to Cart -->
+        <button
+          @click="emit('add-to-cart', item)"
+          class="flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gray-100 text-gray-700 text-sm transition hover:bg-green-100"
+        >
+          <span>+</span>
+          <span>Add to Cart</span>
+        </button>
+      </div>
     </div>
   </div>
 </template>

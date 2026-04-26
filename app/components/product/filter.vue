@@ -8,7 +8,7 @@ const filters = defineModel("filters");
 
 <template>
   <div
-    class="bg-gradient-to-br from-white to-gray-50 p-6 rounded-2xl shadow-md space-y-5 border border-gray-100"
+    class="bg-linear-to-br from-white to-gray-50 p-6 rounded-2xl shadow-md space-y-5 border border-gray-100"
   >
     <!-- Title -->
     <h2 class="text-lg font-semibold text-gray-800 flex items-center gap-2">

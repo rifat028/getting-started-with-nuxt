@@ -4,6 +4,7 @@ import CartCard from "@/components/cart/card.vue";
 import CartSummary from "@/components/cart/summary.vue";
 import { getCart, setCart } from "@/utils/navbar/storage";
 import RecentlyViewed from "~/components/cart/recentlyViewed.vue";
+import EmptyCart from "~/components/cart/emptyCart.vue";
 
 definePageMeta({
   layout: "ecommerce-layout",
@@ -54,14 +55,17 @@ const decreaseQty = (id) => {
   >
     <CartHeader />
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6">
+    <!-- Empty -->
+    <div
+      v-if="cart.length === 0"
+      class="text-center py-16 text-gray-500 mx-auto"
+    >
+      <EmptyCart></EmptyCart>
+    </div>
+
+    <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6">
       <!-- Cart Items -->
       <div class="lg:col-span-2 space-y-4">
-        <!-- Empty -->
-        <div v-if="cart.length === 0" class="text-center py-16 text-gray-500">
-          🛒 Your cart is empty
-        </div>
-
         <!-- Items -->
         <CartCard
           v-for="item in cart"
@@ -78,7 +82,7 @@ const decreaseQty = (id) => {
         <CartSummary :items="cart" />
       </div>
     </div>
-    <div>
+    <div v-if="cart.length !== 0">
       <h1 class="mt-5 md:mt-15 text-2xl font-bold">Recently Viewed Products</h1>
       <RecentlyViewed></RecentlyViewed>
     </div>

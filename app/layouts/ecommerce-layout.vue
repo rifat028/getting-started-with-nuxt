@@ -40,8 +40,14 @@ onMounted(() => {
         </a>
 
         <!-- Mobile Toggle -->
-        <button @click="isOpen = !isOpen" class="md:hidden text-white text-2xl">
-          ☰
+        <button
+          @click="isOpen = !isOpen"
+          class="md:hidden text-white text-2xl flex items-center justify-center"
+        >
+          <span
+            class="rounded-2xl p-3"
+            :class="isOpen ? 'bg-green-500' : 'bg-gray-400'"
+          ></span>
         </button>
 
         <!-- Navigation -->
@@ -87,6 +93,7 @@ onMounted(() => {
             >
               {{ cart.length }}
             </span>
+
             <div
               class="absolute bottom-0 left-1/2 w-0 h-0.75 bg-green-500 transition-all duration-300 group-hover:w-4/5 transform -translate-x-1/2"
             ></div
@@ -130,20 +137,31 @@ onMounted(() => {
           Products
         </NuxtLink>
 
-        <NuxtLink
-          to="/cart"
-          @click="isOpen = false"
-          class="block text-gray-300"
-        >
-          Cart ({{ cart.length }})
+        <NuxtLink to="/cart" @click="isOpen = false" class="text-gray-300 flex">
+          <!-- Cart ({{ cart.length }}) -->
+          Cart
+          <!-- Badge -->
+          <span
+            v-if="cart.length"
+            class="animate-pulse ml-2 translate-y-0.5 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full"
+          >
+            {{ cart.length }}
+          </span>
         </NuxtLink>
 
         <NuxtLink
           to="/favorite"
           @click="isOpen = false"
-          class="block text-green-400"
+          class="flex text-gray-300"
         >
-          Favorites ({{ favorites.length }})
+          Favorites
+          <!-- Badge -->
+          <span
+            v-if="favorites.length"
+            class="translate-y-0.5 ml-2 animate-pulse bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full"
+          >
+            {{ favorites.length }}
+          </span>
         </NuxtLink>
       </div>
     </nav>

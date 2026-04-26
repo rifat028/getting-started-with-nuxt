@@ -8,6 +8,7 @@ import {
   setCart,
 } from "@/utils/navbar/storage";
 import RecentlyViewed from "~/components/cart/recentlyViewed.vue";
+import EmptyFavorite from "~/components/favorite/EmptyFavorite.vue";
 
 definePageMeta({
   layout: "ecommerce-layout",
@@ -58,7 +59,7 @@ const addToCart = (product) => {
 
     <!-- Empty -->
     <div v-if="favorites.length === 0" class="text-center py-20 text-gray-500">
-      ❤️ No favorite items yet
+      <EmptyFavorite></EmptyFavorite>
     </div>
 
     <!-- Items -->
@@ -75,7 +76,7 @@ const addToCart = (product) => {
       />
     </div>
     <div>
-      <div>
+      <div v-if="favorites.length !== 0">
         <h1 class="mt-5 md:mt-15 text-2xl font-bold">
           Recently Viewed Products
         </h1>

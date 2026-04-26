@@ -103,7 +103,7 @@ const toggleFavorite = () => {
             <div
               v-for="i in 4"
               :key="i"
-              class="bg-gray-100 rounded-lg h-20 cursor-pointer hover:ring-2 hover:ring-green-400"
+              class="bg-gray-100 rounded-lg h-20 cursor-pointer hover:ring-2 hover:ring-green-400 animate-pulse"
             ></div>
           </div>
         </div>

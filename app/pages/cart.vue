@@ -3,6 +3,7 @@ import CartHeader from "@/components/cart/header.vue";
 import CartCard from "@/components/cart/card.vue";
 import CartSummary from "@/components/cart/summary.vue";
 import { getCart, setCart } from "@/utils/navbar/storage";
+import RecentlyViewed from "~/components/cart/recentlyViewed.vue";
 
 definePageMeta({
   layout: "ecommerce-layout",
@@ -76,6 +77,10 @@ const decreaseQty = (id) => {
       <div class="lg:col-span-1">
         <CartSummary :items="cart" />
       </div>
+    </div>
+    <div>
+      <h1 class="mt-5 md:mt-15 text-2xl font-bold">Recently Viewed Products</h1>
+      <RecentlyViewed></RecentlyViewed>
     </div>
   </div>
 </template>

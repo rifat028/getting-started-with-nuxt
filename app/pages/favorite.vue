@@ -1,7 +1,13 @@
 <script setup>
 import FavoriteHeader from "@/components/favorite/header.vue";
 import FavoriteCard from "@/components/favorite/card.vue";
-import { getFavorites, setFavorites, getCart, setCart } from "@/utils/navbar/storage";
+import {
+  getFavorites,
+  setFavorites,
+  getCart,
+  setCart,
+} from "@/utils/navbar/storage";
+import RecentlyViewed from "~/components/cart/recentlyViewed.vue";
 
 definePageMeta({
   layout: "ecommerce-layout",
@@ -67,6 +73,14 @@ const addToCart = (product) => {
         @remove="removeFavorite"
         @add-to-cart="addToCart"
       />
+    </div>
+    <div>
+      <div>
+        <h1 class="mt-5 md:mt-15 text-2xl font-bold">
+          Recently Viewed Products
+        </h1>
+        <RecentlyViewed></RecentlyViewed>
+      </div>
     </div>
   </div>
 </template>

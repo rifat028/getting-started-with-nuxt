@@ -31,13 +31,13 @@ const isOpen = ref(false);
 
         <!-- Desktop Navigation -->
         <div class="hidden md:flex items-center gap-8 text-sm font-medium">
-          <NuxtLink to="/" class="nav-link" active-class="text-green-400">
+          <NuxtLink to="/" class="text-gray-400 hover:text-white transition relative px-2 py-1" active-class="text-green-400">
             Home
           </NuxtLink>
 
           <NuxtLink
             to="/product"
-            class="nav-link"
+            class="text-gray-400 hover:text-white transition relative px-2 py-1"
             active-class="text-green-400"
           >
             Products
@@ -46,7 +46,7 @@ const isOpen = ref(false);
           <!-- Cart -->
           <NuxtLink
             to="/cart"
-            class="nav-link relative"
+            class="text-gray-400 hover:text-white transition relative px-2 py-1"
             active-class="text-green-400"
           >
             Cart
@@ -61,7 +61,7 @@ const isOpen = ref(false);
           <!-- Favorites -->
           <NuxtLink
             to="/favorite"
-            class="nav-link relative"
+            class="text-gray-400 hover:text-white transition relative px-2 py-1"
             active-class="text-green-400"
           >
             Favorites
@@ -80,21 +80,21 @@ const isOpen = ref(false);
         v-if="isOpen"
         class="md:hidden px-6 pb-6 space-y-4 bg-gray-900 border-t border-gray-700"
       >
-        <NuxtLink to="/" @click="isOpen = false" class="mobile-link">
+        <NuxtLink to="/" @click="isOpen = false" class="block text-gray-300 hover:text-white text-base">
           Home
         </NuxtLink>
 
-        <NuxtLink to="/product" @click="isOpen = false" class="mobile-link">
+        <NuxtLink to="/product" @click="isOpen = false" class="block text-gray-300 hover:text-white text-base">
           Products
         </NuxtLink>
 
         <NuxtLink
           to="/cart"
           @click="isOpen = false"
-          class="mobile-link flex justify-between"
+          class="block text-gray-300 hover:text-white text-base flex justify-between"
         >
           Cart
-          <span v-if="store.cart.length" class="badge">
+          <span v-if="store.cart.length" class="bg-red-500 text-white text-xs px-2 rounded">
             {{ store.cart.length }}
           </span>
         </NuxtLink>
@@ -102,10 +102,10 @@ const isOpen = ref(false);
         <NuxtLink
           to="/favorite"
           @click="isOpen = false"
-          class="mobile-link flex justify-between"
+          class="block text-gray-300 hover:text-white text-base flex justify-between"
         >
           Favorites
-          <span v-if="store.favorites.length" class="badge">
+          <span v-if="store.favorites.length" class="bg-red-500 text-white text-xs px-2 rounded">
             {{ store.favorites.length }}
           </span>
         </NuxtLink>
@@ -120,17 +120,3 @@ const isOpen = ref(false);
     <LayoutFooter />
   </div>
 </template>
-
-<style>
-.nav-link {
-  @apply text-gray-400 hover:text-white transition relative px-2 py-1;
-}
-
-.mobile-link {
-  @apply block text-gray-300 hover:text-white text-base;
-}
-
-.badge {
-  @apply bg-red-500 text-white text-xs px-2 rounded;
-}
-</style>

@@ -3,7 +3,7 @@ import LayoutFooter from "~/components/layout/layoutFooter.vue";
 
 // ✅ Use Pinia store
 const store = useShopStore();
-store.loadFromStorage();
+// store.loadFromStorage();
 
 const isOpen = ref(false);
 </script>

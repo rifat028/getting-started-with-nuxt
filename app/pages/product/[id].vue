@@ -1,26 +1,12 @@
 <script setup>
 import { useRoute } from "vue-router";
-import {
-  getCart,
-  setCart,
-  getFavorites,
-  setFavorites,
-} from "@/utils/navbar/storage";
+import { useShopStore } from "@/stores/useShopStore";
 
 definePageMeta({
   layout: "ecommerce-layout",
 });
 
-const inCart = ref(false);
-const inFavorite = ref(false);
-
-const checkStatus = () => {
-  const cart = getCart();
-  const favorites = getFavorites();
-
-  inCart.value = cart.some((i) => i.id === product.value?.id);
-  inFavorite.value = favorites.some((i) => i.id === product.value?.id);
-};
+const store = useShopStore();
 
 const route = useRoute();
 const id = route.params.id;
@@ -41,35 +27,27 @@ const fetchProduct = async () => {
 
 onMounted(async () => {
   await fetchProduct();
-  checkStatus();
 });
 
-// cart
+// ✅ computed state (auto reactive)
+const inCart = computed(() =>
+  store.cart.some((i) => i.id === product.value?.id),
+);
+
+const inFavorite = computed(() =>
+  store.favorites.some((i) => i.id === product.value?.id),
+);
+
+// 🛒 cart
 const addToCart = () => {
-  if (inCart.value) return;
-
-  let cart = getCart();
-  const existing = cart.find((i) => i.id === product.value.id);
-
-  if (existing) existing.quantity++;
-  else cart.push({ ...product.value, quantity: 1 });
-
-  setCart(cart);
-
-  inCart.value = true;
+  if (!product.value || inCart.value) return;
+  store.addToCart(product.value);
 };
 
-// favorite
+// ❤️ favorite
 const toggleFavorite = () => {
-  if (inFavorite.value) return;
-
-  let favorites = getFavorites();
-
-  favorites.push(product.value);
-
-  setFavorites(favorites);
-
-  inFavorite.value = true; // 🔥 THIS IS THE FIX
+  if (!product.value || inFavorite.value) return;
+  store.toggleFavorite(product.value);
 };
 </script>
 
@@ -98,7 +76,7 @@ const toggleFavorite = () => {
             />
           </div>
 
-          <!-- Thumbnails (UI only) -->
+          <!-- Thumbnails -->
           <div class="grid grid-cols-4 gap-3 mt-4">
             <div
               v-for="i in 4"
@@ -118,13 +96,13 @@ const toggleFavorite = () => {
           <!-- Rating -->
           <div class="flex items-center gap-2 mb-4">
             <div class="text-yellow-400 text-lg">
-              <Icon name="carbon:star-filled"></Icon>
-              <Icon name="carbon:star-filled"></Icon>
-              <Icon name="carbon:star-filled"></Icon>
-              <Icon name="carbon:star-filled"></Icon>
-              <span class="text-gray-400 text-lg"
-                ><Icon name="carbon:star-filled"></Icon
-              ></span>
+              <Icon name="carbon:star-filled" />
+              <Icon name="carbon:star-filled" />
+              <Icon name="carbon:star-filled" />
+              <Icon name="carbon:star-filled" />
+              <span class="text-gray-400">
+                <Icon name="carbon:star-filled" />
+              </span>
             </div>
             <span class="text-gray-500 text-sm">
               ({{ product.rating.count }} reviews)
@@ -174,7 +152,7 @@ const toggleFavorite = () => {
             <button
               @click="addToCart"
               :disabled="inCart"
-              class="flex-1 py-3 px-6 bg-linear-to-r from-gray-900 to-gray-800 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition shadow-md flex items-center justify-center"
+              class="flex-1 py-3 px-6 bg-linear-to-r from-gray-900 to-gray-800 text-white rounded-lg hover:from-green-600 hover:to-green-700 transition shadow-md flex items-center justify-center disabled:opacity-50"
             >
               {{ inCart ? "Already in Cart" : "Add to Cart" }}
             </button>
@@ -182,7 +160,7 @@ const toggleFavorite = () => {
             <button
               @click="toggleFavorite"
               :disabled="inFavorite"
-              class="flex-1 py-3 px-6 border-2 border-gray-300 text-gray-700 rounded-lg hover:border-green-500 hover:text-green-600 transition"
+              class="flex-1 py-3 px-6 border-2 border-gray-300 text-gray-700 rounded-lg hover:border-green-500 hover:text-green-600 transition disabled:opacity-50"
             >
               {{ inFavorite ? "Added to Favorites" : "Add to Favorites" }}
             </button>
@@ -192,17 +170,16 @@ const toggleFavorite = () => {
           <div class="border-t pt-6">
             <h4 class="text-sm text-gray-500 mb-3">Share this product</h4>
 
-            <!-- Social -->
             <div class="flex gap-4 text-xl">
-              <span class="text-blue-500 cursor-pointer hover:text-blue-300"
-                ><Icon name="ic:round-facebook"></Icon
-              ></span>
-              <span class="text-blue-500 cursor-pointer hover:text-blue-300"
-                ><Icon name="tabler:brand-instagram"></Icon
-              ></span>
-              <span class="text-blue-500 cursor-pointer hover:text-blue-300"
-                ><Icon name="mdi:twitter"></Icon
-              ></span>
+              <span class="text-blue-500 cursor-pointer hover:text-blue-300">
+                <Icon name="ic:round-facebook" />
+              </span>
+              <span class="text-pink-500 cursor-pointer hover:text-pink-300">
+                <Icon name="tabler:brand-instagram" />
+              </span>
+              <span class="text-blue-400 cursor-pointer hover:text-blue-200">
+                <Icon name="mdi:twitter" />
+              </span>
             </div>
           </div>
         </div>

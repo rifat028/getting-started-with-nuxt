@@ -3,6 +3,7 @@ import LayoutFooter from "~/components/layout/layoutFooter.vue";
 
 // ✅ Use Pinia store
 const store = useShopStore();
+store.loadFromStorage();
 
 const isOpen = ref(false);
 </script>
@@ -31,46 +32,62 @@ const isOpen = ref(false);
 
         <!-- Desktop Navigation -->
         <div class="hidden md:flex items-center gap-8 text-sm font-medium">
-          <NuxtLink to="/" class="text-gray-400 hover:text-white transition relative px-2 py-1" active-class="text-green-400">
+          <NuxtLink
+            to="/"
+            class="text-gray-400 hover:text-white transition relative px-2 py-1 group"
+            active-class="text-green-400"
+          >
             Home
+            <span
+              class="absolute bottom-0 left-1/2 w-0 h-0.75 bg-green-500 transition-all duration-300 group-hover:w-4/5 transform -translate-x-1/2"
+            ></span>
           </NuxtLink>
 
           <NuxtLink
             to="/product"
-            class="text-gray-400 hover:text-white transition relative px-2 py-1"
+            class="text-gray-400 hover:text-white transition relative px-2 py-1 group"
             active-class="text-green-400"
           >
             Products
+            <span
+              class="absolute bottom-0 left-1/2 w-0 h-0.75 bg-green-500 transition-all duration-300 group-hover:w-4/5 transform -translate-x-1/2"
+            ></span>
           </NuxtLink>
 
           <!-- Cart -->
           <NuxtLink
             to="/cart"
-            class="text-gray-400 hover:text-white transition relative px-2 py-1"
+            class="text-gray-400 hover:text-white transition relative px-2 py-1 group"
             active-class="text-green-400"
           >
             Cart
             <span
               v-if="store.cart.length"
-              class="absolute -top-2 -right-4 bg-red-500 text-xs w-5 h-5 flex items-center justify-center rounded-full"
+              class="absolute -top-2 -right-4 bg-red-500 text-xs w-5 h-5 flex items-center justify-center rounded-full font-semibold animate-pulse text-white"
             >
               {{ store.cart.length }}
             </span>
+            <span
+              class="absolute bottom-0 left-1/2 w-0 h-0.75 bg-green-500 transition-all duration-300 group-hover:w-4/5 transform -translate-x-1/2"
+            ></span>
           </NuxtLink>
 
           <!-- Favorites -->
           <NuxtLink
             to="/favorite"
-            class="text-gray-400 hover:text-white transition relative px-2 py-1"
+            class="text-gray-400 hover:text-white transition relative px-2 py-1 group"
             active-class="text-green-400"
           >
             Favorites
             <span
               v-if="store.favorites.length"
-              class="absolute -top-2 -right-4 bg-red-500 text-xs w-5 h-5 flex items-center justify-center rounded-full"
+              class="absolute -top-2 -right-4 bg-red-500 text-xs w-5 h-5 flex items-center justify-center rounded-full font-semibold animate-pulse text-white"
             >
               {{ store.favorites.length }}
             </span>
+            <span
+              class="absolute bottom-0 left-1/2 w-0 h-0.75 bg-green-500 transition-all duration-300 group-hover:w-4/5 transform -translate-x-1/2"
+            ></span>
           </NuxtLink>
         </div>
       </div>
@@ -80,21 +97,32 @@ const isOpen = ref(false);
         v-if="isOpen"
         class="md:hidden px-6 pb-6 space-y-4 bg-gray-900 border-t border-gray-700"
       >
-        <NuxtLink to="/" @click="isOpen = false" class="block text-gray-300 hover:text-white text-base">
+        <NuxtLink
+          to="/"
+          @click="isOpen = false"
+          class="block text-gray-300 hover:text-white text-base"
+        >
           Home
         </NuxtLink>
 
-        <NuxtLink to="/product" @click="isOpen = false" class="block text-gray-300 hover:text-white text-base">
+        <NuxtLink
+          to="/product"
+          @click="isOpen = false"
+          class="block text-gray-300 hover:text-white text-base"
+        >
           Products
         </NuxtLink>
 
         <NuxtLink
           to="/cart"
           @click="isOpen = false"
-          class="block text-gray-300 hover:text-white text-base flex justify-between"
+          class="text-gray-300 hover:text-white text-base flex justify-start items-center"
         >
           Cart
-          <span v-if="store.cart.length" class="bg-red-500 text-white text-xs px-2 rounded">
+          <span
+            v-if="store.cart.length"
+            class="bg-red-500 text-white text-xs px-2 rounded-full m-2 flex items-center justify-center h-5 w-5"
+          >
             {{ store.cart.length }}
           </span>
         </NuxtLink>
@@ -102,10 +130,13 @@ const isOpen = ref(false);
         <NuxtLink
           to="/favorite"
           @click="isOpen = false"
-          class="block text-gray-300 hover:text-white text-base flex justify-between"
+          class="text-gray-300 hover:text-white text-base flex justify-start items-center"
         >
           Favorites
-          <span v-if="store.favorites.length" class="bg-red-500 text-white text-xs px-2 rounded">
+          <span
+            v-if="store.favorites.length"
+            class="bg-red-500 text-white text-xs px-2 rounded-full ml-2 flex items-center justify-center h-5 w-5"
+          >
             {{ store.favorites.length }}
           </span>
         </NuxtLink>

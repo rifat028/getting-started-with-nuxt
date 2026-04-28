@@ -9,7 +9,7 @@ export const useShopStore = defineStore("shop", () => {
   // 🔍 GETTERS
   const isInCart = (id) => {
     return cart.value.some((item) => item.id === id);
-  };
+  }; 
 
   const isFavorite = (id) => {
     return favorites.value.some((item) => item.id === id);

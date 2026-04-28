@@ -1,23 +1,28 @@
 <script setup>
 import { useRouter } from "vue-router";
+import { computed } from "vue";
+import { useShopStore } from "@/stores/useShopStore";
 
 const props = defineProps({
   product: Object,
-  favorites: Array,
 });
 
-const emit = defineEmits(["add-to-cart", "toggle-favorite"]);
-
 const router = useRouter();
+const store = useShopStore();
 
-// 🔗 Navigate
+// 🔗 Navigate to details page
 const goToDetails = () => {
-  router.push(`/product-details/${props.product.id}`);
+  router.push(`/product/${props.product.id}`);
 };
 
-// ❤️ Favorite check
+// ❤️ Check favorite (from store)
 const isFavorite = computed(() => {
-  return props.favorites?.some((i) => i.id === props.product.id);
+  return store.isFavorite(props.product.id);
+});
+
+// 🛒 Check cart (from store)
+const isInCart = computed(() => {
+  return store.isInCart(props.product.id);
 });
 </script>
 
@@ -28,18 +33,15 @@ const isFavorite = computed(() => {
   >
     <!-- IMAGE -->
     <div class="relative overflow-hidden h-60 bg-gray-50">
-      <!-- Link wrapper -->
-      <div class="block h-full">
-        <img
-          :src="product.image"
-          class="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
-        />
+      <img
+        :src="product.image"
+        class="w-full h-full object-contain transition-transform duration-700 group-hover:scale-110"
+      />
 
-        <!-- Hover gradient -->
-        <div
-          class="absolute inset-0 bg-linear-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-        ></div>
-      </div>
+      <!-- Hover overlay -->
+      <div
+        class="absolute inset-0 bg-linear-to-t from-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+      ></div>
 
       <!-- Discount badge -->
       <div
@@ -71,37 +73,31 @@ const isFavorite = computed(() => {
       <div class="flex items-center justify-between mb-4">
         <div class="text-yellow-400 text-sm">★★★★★</div>
 
-        <!-- Favorite -->
+        <!-- ❤️ Favorite -->
         <button
-          @click.stop="emit('toggle-favorite', product)"
-          class="text-gray-300 hover:text-red-500 transition text-lg"
+          @click.stop="store.toggleFavorite(product)"
+          class="text-lg transition"
+          :class="
+            isFavorite ? 'text-red-500' : 'text-gray-300 hover:text-red-500'
+          "
         >
           <span v-if="isFavorite">❤️</span>
           <span v-else>🤍</span>
         </button>
       </div>
 
-      <!-- Add to Cart -->
+      <!-- 🛒 Add to Cart -->
       <button
-        @click.stop="emit('add-to-cart', product)"
-        class="w-full py-3 px-4 bg-linear-to-r from-gray-800 to-gray-700 text-white font-medium rounded-xl flex items-center justify-center gap-2 group overflow-hidden relative"
+        @click.stop="store.addToCart(product)"
+        :disabled="isInCart"
+        class="w-full py-3 px-4 font-medium rounded-xl flex items-center justify-center gap-2 transition"
+        :class="
+          isInCart
+            ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            : 'bg-linear-to-r from-gray-800 to-gray-700 text-white hover:from-green-600 hover:to-green-700'
+        "
       >
-        <span class="relative z-10 flex items-center gap-2">
-          <span class="group-hover:-translate-x-1 transition-transform">
-            Add to Cart
-          </span>
-          <span class="opacity-0 group-hover:opacity-100 transform transition duration-300">
-            +
-          </span>
-        </span>
-
-        <!-- Hover overlay -->
-        <span
-          class="absolute inset-0 bg-gray-600 opacity-0 group-hover:opacity-20 transition"
-        ></span>
-        <span
-          class="absolute inset-0 bg-gray-400 opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-0"
-        ></span>
+        {{ isInCart ? "Already in Cart" : "Add to Cart" }}
       </button>
     </div>
   </div>

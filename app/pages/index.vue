@@ -4,9 +4,9 @@ definePageMeta({
 });
 
 import { ref, reactive, computed, watch } from "vue";
-import ProductCard from "@/components/ProductCard.vue";
-import ProductFilter from "@/components/ProductFilter.vue";
-import CartSummary from "@/components/CartSummary.vue";
+import ProductCard from "@/components/Index/ProductCard.vue";
+import ProductFilter from "@/components/Index/ProductFilter.vue";
+import CartSummary from "~/components/Index/CartSummary.vue";
 
 const products = ref([
   { id: 1, name: "Shoes", price: 50, category: "fashion" },

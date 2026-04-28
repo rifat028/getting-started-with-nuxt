@@ -1,10 +1,11 @@
 <script setup>
+import { useShopStore } from "@/stores/useShopStore";
+
 const props = defineProps({
   item: Object,
 });
 
-// ✅ define emits
-const emit = defineEmits(["remove", "increase", "decrease"]);
+const store = useShopStore();
 </script>
 
 <template>
@@ -30,9 +31,9 @@ const emit = defineEmits(["remove", "increase", "decrease"]);
 
         <p class="text-green-600 font-bold text-lg mt-2">
           ${{ item.price }}
-          <span class="text-sm text-gray-500 ml-1"
-            >(${{ item.price }} each)</span
-          >
+          <span class="text-sm text-gray-500 ml-1">
+            (${{ item.price }} each)
+          </span>
         </p>
       </div>
 
@@ -43,7 +44,7 @@ const emit = defineEmits(["remove", "increase", "decrease"]);
           class="flex items-center border border-gray-300 rounded-lg overflow-hidden"
         >
           <button
-            @click="emit('decrease', item.id)"
+            @click="store.decreaseQty(item.id)"
             class="px-3 py-1 hover:bg-gray-100 border-r border-gray-300"
           >
             -
@@ -52,7 +53,7 @@ const emit = defineEmits(["remove", "increase", "decrease"]);
           <span class="px-4">{{ item.quantity || 1 }}</span>
 
           <button
-            @click="emit('increase', item.id)"
+            @click="store.increaseQty(item.id)"
             class="px-3 py-1 hover:bg-gray-100 border-l border-gray-300"
           >
             +
@@ -61,7 +62,7 @@ const emit = defineEmits(["remove", "increase", "decrease"]);
 
         <!-- Remove -->
         <button
-          @click="emit('remove', item.id)"
+          @click="store.removeFromCart(item.id)"
           class="text-red-500 text-sm px-2 py-1 hover:bg-red-500 hover:text-white hover:scale-105 rounded-xl transition transform duration-300 hover:font-semibold"
         >
           X

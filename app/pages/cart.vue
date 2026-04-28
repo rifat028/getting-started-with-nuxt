@@ -2,50 +2,30 @@
 import CartHeader from "@/components/cart/header.vue";
 import CartCard from "@/components/cart/card.vue";
 import CartSummary from "@/components/cart/summary.vue";
-import { getCart, setCart } from "@/utils/navbar/storage";
 import RecentlyViewed from "~/components/cart/recentlyViewed.vue";
 import EmptyCart from "~/components/cart/emptyCart.vue";
+import { useShopStore } from "@/stores/useShopStore";
 
 definePageMeta({
   layout: "ecommerce-layout",
 });
 
-// ✅ State
-const cart = ref(getCart());
+const store = useShopStore(); // ✅ use Pinia
 
-// ✅ Sync
-const sync = () => {
-  cart.value = getCart();
-};
+// direct reactive cart
+const cart = computed(() => store.cart);
 
-onMounted(() => {
-  window.addEventListener("cart-updated", sync);
-});
-
-onUnmounted(() => {
-  window.removeEventListener("cart-updated", sync);
-});
-
-// ✅ Remove
+// actions
 const removeFromCart = (id) => {
-  cart.value = cart.value.filter((i) => i.id !== id);
-  setCart(cart.value); // 🔥 important
+  store.removeFromCart(id);
 };
 
-// ✅ Increase
 const increaseQty = (id) => {
-  const item = cart.value.find((i) => i.id === id);
-  if (item) item.quantity++;
-
-  setCart(cart.value); // 🔥 important
+  store.increaseQty(id);
 };
 
-// ✅ Decrease
 const decreaseQty = (id) => {
-  const item = cart.value.find((i) => i.id === id);
-  if (item && item.quantity > 1) item.quantity--;
-
-  setCart(cart.value); // 🔥 important
+  store.decreaseQty(id);
 };
 </script>
 
@@ -60,13 +40,13 @@ const decreaseQty = (id) => {
       v-if="cart.length === 0"
       class="text-center py-16 text-gray-500 mx-auto"
     >
-      <EmptyCart></EmptyCart>
+      <EmptyCart />
     </div>
 
+    <!-- Cart Content -->
     <div v-else class="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6">
-      <!-- Cart Items -->
+      <!-- Items -->
       <div class="lg:col-span-2 space-y-4">
-        <!-- Items -->
         <CartCard
           v-for="item in cart"
           :key="item.id"
@@ -82,9 +62,11 @@ const decreaseQty = (id) => {
         <CartSummary :items="cart" />
       </div>
     </div>
+
+    <!-- Recently Viewed -->
     <div v-if="cart.length !== 0">
       <h1 class="mt-5 md:mt-15 text-2xl font-bold">Recently Viewed Products</h1>
-      <RecentlyViewed></RecentlyViewed>
+      <RecentlyViewed />
     </div>
   </div>
 </template>

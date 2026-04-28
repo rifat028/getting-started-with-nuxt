@@ -1,24 +1,10 @@
 <script setup>
-import { getCart, getFavorites } from "@/utils/navbar/storage";
 import LayoutFooter from "~/components/layout/layoutFooter.vue";
 
+// ✅ Use Pinia store
+const store = useShopStore();
+
 const isOpen = ref(false);
-
-const cart = ref([]);
-const favorites = ref([]);
-
-onMounted(() => {
-  const loadData = () => {
-    cart.value = getCart();
-    favorites.value = getFavorites();
-  };
-
-  loadData();
-
-  // 🔥 Listen to updates
-  window.addEventListener("cart-updated", loadData);
-  window.addEventListener("favorite-updated", loadData);
-});
 </script>
 
 <template>
@@ -29,138 +15,98 @@ onMounted(() => {
     >
       <div class="mx-auto px-6 md:px-15 py-4 flex justify-between items-center">
         <!-- Logo -->
-        <a href="/" class="relative flex items-center gap-2 group">
-          <div class="bg-white p-3 rounded-full flex items-center">
+        <NuxtLink to="/" class="flex items-center">
+          <div class="bg-white p-3 rounded-full">
             <img
               src="https://bdfunnelbuilder.com/BFLOGO.png"
-              alt="Logo"
               class="w-15 md:w-25"
             />
           </div>
-        </a>
+        </NuxtLink>
 
         <!-- Mobile Toggle -->
-        <button
-          @click="isOpen = !isOpen"
-          class="md:hidden text-white text-2xl flex items-center justify-center"
-        >
-          <span
-            class="rounded-2xl p-3"
-            :class="isOpen ? 'bg-green-500' : 'bg-gray-400'"
-          ></span>
+        <button @click="isOpen = !isOpen" class="md:hidden text-white text-2xl">
+          ☰
         </button>
 
-        <!-- Navigation -->
-        <div
-          class="hidden md:flex items-center gap-8 text-sm font-medium px-4 py-2 transition-colors duration-300"
-        >
-          <!-- Home -->
-          <NuxtLink
-            to="/"
-            class="relative text-gray-400 hover:text-white text-sm font-medium px-4 py-2 transition-colors duration-300 group"
-            active-class="text-green-400"
-          >
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex items-center gap-8 text-sm font-medium">
+          <NuxtLink to="/" class="nav-link" active-class="text-green-400">
             Home
-            <div
-              class="absolute bottom-0 left-1/2 w-0 h-0.75 bg-green-500 transition-all duration-300 group-hover:w-4/5 transform -translate-x-1/2"
-            ></div
-          ></NuxtLink>
+          </NuxtLink>
 
-          <!-- Products -->
           <NuxtLink
             to="/product"
-            class="relative text-gray-400 hover:text-white text-sm font-medium px-4 py-2 transition-colors duration-300 group"
+            class="nav-link"
             active-class="text-green-400"
           >
             Products
-            <div
-              class="absolute bottom-0 left-1/2 w-0 h-0.75 bg-green-500 transition-all duration-300 group-hover:w-4/5 transform -translate-x-1/2"
-            ></div
-          ></NuxtLink>
+          </NuxtLink>
 
           <!-- Cart -->
           <NuxtLink
             to="/cart"
-            class="relative text-gray-400 hover:text-white text-sm font-medium px-4 py-2 transition-colors duration-300 group"
+            class="nav-link relative"
             active-class="text-green-400"
           >
             Cart
-
-            <!-- Badge -->
             <span
-              v-if="cart.length"
-              class="absolute bottom-2 -right-4 animate-pulse bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full"
+              v-if="store.cart.length"
+              class="absolute -top-2 -right-4 bg-red-500 text-xs w-5 h-5 flex items-center justify-center rounded-full"
             >
-              {{ cart.length }}
+              {{ store.cart.length }}
             </span>
-
-            <div
-              class="absolute bottom-0 left-1/2 w-0 h-0.75 bg-green-500 transition-all duration-300 group-hover:w-4/5 transform -translate-x-1/2"
-            ></div
-          ></NuxtLink>
+          </NuxtLink>
 
           <!-- Favorites -->
           <NuxtLink
             to="/favorite"
-            class="relative text-gray-400 hover:text-white text-sm font-medium px-4 py-2 transition-colors duration-300 group"
+            class="nav-link relative"
             active-class="text-green-400"
           >
             Favorites
-
-            <!-- Badge -->
             <span
-              v-if="favorites.length"
-              class="absolute bottom-2 -right-4 animate-pulse bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full"
+              v-if="store.favorites.length"
+              class="absolute -top-2 -right-4 bg-red-500 text-xs w-5 h-5 flex items-center justify-center rounded-full"
             >
-              {{ favorites.length }}
+              {{ store.favorites.length }}
             </span>
-            <div
-              class="absolute bottom-0 left-1/2 w-0 h-0.75 bg-green-500 transition-all duration-300 group-hover:w-4/5 transform -translate-x-1/2"
-            ></div
-          ></NuxtLink>
+          </NuxtLink>
         </div>
       </div>
+
       <!-- Mobile Menu -->
       <div
         v-if="isOpen"
         class="md:hidden px-6 pb-6 space-y-4 bg-gray-900 border-t border-gray-700"
       >
-        <NuxtLink to="/" @click="isOpen = false" class="block text-gray-300">
+        <NuxtLink to="/" @click="isOpen = false" class="mobile-link">
           Home
         </NuxtLink>
 
-        <NuxtLink
-          to="/product"
-          @click="isOpen = false"
-          class="block text-gray-300"
-        >
+        <NuxtLink to="/product" @click="isOpen = false" class="mobile-link">
           Products
         </NuxtLink>
 
-        <NuxtLink to="/cart" @click="isOpen = false" class="text-gray-300 flex">
-          <!-- Cart ({{ cart.length }}) -->
+        <NuxtLink
+          to="/cart"
+          @click="isOpen = false"
+          class="mobile-link flex justify-between"
+        >
           Cart
-          <!-- Badge -->
-          <span
-            v-if="cart.length"
-            class="animate-pulse ml-2 translate-y-0.5 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full"
-          >
-            {{ cart.length }}
+          <span v-if="store.cart.length" class="badge">
+            {{ store.cart.length }}
           </span>
         </NuxtLink>
 
         <NuxtLink
           to="/favorite"
           @click="isOpen = false"
-          class="flex text-gray-300"
+          class="mobile-link flex justify-between"
         >
           Favorites
-          <!-- Badge -->
-          <span
-            v-if="favorites.length"
-            class="translate-y-0.5 ml-2 animate-pulse bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full"
-          >
-            {{ favorites.length }}
+          <span v-if="store.favorites.length" class="badge">
+            {{ store.favorites.length }}
           </span>
         </NuxtLink>
       </div>
@@ -171,6 +117,20 @@ onMounted(() => {
       <slot />
     </main>
 
-    <LayoutFooter></LayoutFooter>
+    <LayoutFooter />
   </div>
 </template>
+
+<style>
+.nav-link {
+  @apply text-gray-400 hover:text-white transition relative px-2 py-1;
+}
+
+.mobile-link {
+  @apply block text-gray-300 hover:text-white text-base;
+}
+
+.badge {
+  @apply bg-red-500 text-white text-xs px-2 rounded;
+}
+</style>
